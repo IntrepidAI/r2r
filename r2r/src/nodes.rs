@@ -1586,6 +1586,7 @@ pub trait IsAvailablePollable {
     fn register_poll_available(&self, sender: oneshot::Sender<()>) -> Result<()>;
 }
 
+#[derive(Debug)]
 pub struct TopicEndpointInfo {
     pub node_name: String,
     pub node_namespace: String,
