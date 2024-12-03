@@ -1263,6 +1263,196 @@ impl Node {
         }
     }
 
+    pub fn get_publisher_names_and_types_by_node(
+        &self, name: &str, namespace: &str
+    ) -> Result<HashMap<String, Vec<String>>> {
+        let c_node_name = CString::new(name).unwrap();
+        let c_node_ns = CString::new(namespace).unwrap();
+        let mut tnat = unsafe { rmw_get_zero_initialized_names_and_types() };
+        let ret = unsafe {
+            rcl_get_publisher_names_and_types_by_node(
+                self.node_handle.as_ref(),
+                &mut rcutils_get_default_allocator(),
+                false,
+                c_node_name.as_ptr(),
+                c_node_ns.as_ptr(),
+                &mut tnat,
+            )
+        };
+        if ret != RCL_RET_OK as i32 {
+            return Err(Error::from_rcl_error(ret));
+        }
+
+        let mut res = HashMap::new();
+        if tnat.names.data != std::ptr::null_mut() && tnat.types != std::ptr::null_mut() {
+            let names = unsafe { std::slice::from_raw_parts(tnat.names.data, tnat.names.size) };
+            let types = unsafe { std::slice::from_raw_parts(tnat.types, tnat.names.size) };
+
+            for (n, t) in names.iter().zip(types) {
+                assert!(!(*n).is_null());
+                let topic_name = unsafe { CStr::from_ptr(*n).to_str().unwrap().to_owned() };
+                assert!(!t.data.is_null());
+                let topic_types = unsafe { std::slice::from_raw_parts(t, t.size) };
+                let topic_types: Vec<String> = unsafe {
+                    topic_types
+                        .iter()
+                        .map(|t| {
+                            assert!(*(t.data) != std::ptr::null_mut());
+                            CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                        })
+                        .collect()
+                };
+                res.insert(topic_name, topic_types);
+            }
+        }
+        unsafe {
+            rmw_names_and_types_fini(&mut tnat);
+        } // TODO: check return value
+        Ok(res)
+    }
+
+    pub fn get_subscriber_names_and_types_by_node(
+        &self, name: &str, namespace: &str
+    ) -> Result<HashMap<String, Vec<String>>> {
+        let c_node_name = CString::new(name).unwrap();
+        let c_node_ns = CString::new(namespace).unwrap();
+        let mut tnat = unsafe { rmw_get_zero_initialized_names_and_types() };
+        let ret = unsafe {
+            rcl_get_subscriber_names_and_types_by_node(
+                self.node_handle.as_ref(),
+                &mut rcutils_get_default_allocator(),
+                false,
+                c_node_name.as_ptr(),
+                c_node_ns.as_ptr(),
+                &mut tnat,
+            )
+        };
+        if ret != RCL_RET_OK as i32 {
+            return Err(Error::from_rcl_error(ret));
+        }
+
+        let mut res = HashMap::new();
+        if tnat.names.data != std::ptr::null_mut() && tnat.types != std::ptr::null_mut() {
+            let names = unsafe { std::slice::from_raw_parts(tnat.names.data, tnat.names.size) };
+            let types = unsafe { std::slice::from_raw_parts(tnat.types, tnat.names.size) };
+
+            for (n, t) in names.iter().zip(types) {
+                assert!(!(*n).is_null());
+                let topic_name = unsafe { CStr::from_ptr(*n).to_str().unwrap().to_owned() };
+                assert!(!t.data.is_null());
+                let topic_types = unsafe { std::slice::from_raw_parts(t, t.size) };
+                let topic_types: Vec<String> = unsafe {
+                    topic_types
+                        .iter()
+                        .map(|t| {
+                            assert!(*(t.data) != std::ptr::null_mut());
+                            CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                        })
+                        .collect()
+                };
+                res.insert(topic_name, topic_types);
+            }
+        }
+        unsafe {
+            rmw_names_and_types_fini(&mut tnat);
+        } // TODO: check return value
+        Ok(res)
+    }
+
+    pub fn get_service_names_and_types_by_node(
+        &self, name: &str, namespace: &str
+    ) -> Result<HashMap<String, Vec<String>>> {
+        let c_node_name = CString::new(name).unwrap();
+        let c_node_ns = CString::new(namespace).unwrap();
+        let mut tnat = unsafe { rmw_get_zero_initialized_names_and_types() };
+        let ret = unsafe {
+            rcl_get_service_names_and_types_by_node(
+                self.node_handle.as_ref(),
+                &mut rcutils_get_default_allocator(),
+                c_node_name.as_ptr(),
+                c_node_ns.as_ptr(),
+                &mut tnat,
+            )
+        };
+        if ret != RCL_RET_OK as i32 {
+            return Err(Error::from_rcl_error(ret));
+        }
+
+        let mut res = HashMap::new();
+        if tnat.names.data != std::ptr::null_mut() && tnat.types != std::ptr::null_mut() {
+            let names = unsafe { std::slice::from_raw_parts(tnat.names.data, tnat.names.size) };
+            let types = unsafe { std::slice::from_raw_parts(tnat.types, tnat.names.size) };
+
+            for (n, t) in names.iter().zip(types) {
+                assert!(!(*n).is_null());
+                let topic_name = unsafe { CStr::from_ptr(*n).to_str().unwrap().to_owned() };
+                assert!(!t.data.is_null());
+                let topic_types = unsafe { std::slice::from_raw_parts(t, t.size) };
+                let topic_types: Vec<String> = unsafe {
+                    topic_types
+                        .iter()
+                        .map(|t| {
+                            assert!(*(t.data) != std::ptr::null_mut());
+                            CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                        })
+                        .collect()
+                };
+                res.insert(topic_name, topic_types);
+            }
+        }
+        unsafe {
+            rmw_names_and_types_fini(&mut tnat);
+        } // TODO: check return value
+        Ok(res)
+    }
+
+    pub fn get_client_names_and_types_by_node(
+        &self, name: &str, namespace: &str
+    ) -> Result<HashMap<String, Vec<String>>> {
+        let c_node_name = CString::new(name).unwrap();
+        let c_node_ns = CString::new(namespace).unwrap();
+        let mut tnat = unsafe { rmw_get_zero_initialized_names_and_types() };
+        let ret = unsafe {
+            rcl_get_client_names_and_types_by_node(
+                self.node_handle.as_ref(),
+                &mut rcutils_get_default_allocator(),
+                c_node_name.as_ptr(),
+                c_node_ns.as_ptr(),
+                &mut tnat,
+            )
+        };
+        if ret != RCL_RET_OK as i32 {
+            return Err(Error::from_rcl_error(ret));
+        }
+
+        let mut res = HashMap::new();
+        if tnat.names.data != std::ptr::null_mut() && tnat.types != std::ptr::null_mut() {
+            let names = unsafe { std::slice::from_raw_parts(tnat.names.data, tnat.names.size) };
+            let types = unsafe { std::slice::from_raw_parts(tnat.types, tnat.names.size) };
+
+            for (n, t) in names.iter().zip(types) {
+                assert!(!(*n).is_null());
+                let topic_name = unsafe { CStr::from_ptr(*n).to_str().unwrap().to_owned() };
+                assert!(!t.data.is_null());
+                let topic_types = unsafe { std::slice::from_raw_parts(t, t.size) };
+                let topic_types: Vec<String> = unsafe {
+                    topic_types
+                        .iter()
+                        .map(|t| {
+                            assert!(*(t.data) != std::ptr::null_mut());
+                            CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                        })
+                        .collect()
+                };
+                res.insert(topic_name, topic_types);
+            }
+        }
+        unsafe {
+            rmw_names_and_types_fini(&mut tnat);
+        } // TODO: check return value
+        Ok(res)
+    }
+
     /// Returns a map of topic names and type names of the publishers
     /// visible to this node.
     pub fn get_topic_names_and_types(&self) -> Result<HashMap<String, Vec<String>>> {
@@ -1308,6 +1498,130 @@ impl Node {
         Ok(res)
     }
 
+    pub fn get_service_names_and_types(&self) -> Result<HashMap<String, Vec<String>>> {
+        let mut tnat = unsafe { rmw_get_zero_initialized_names_and_types() };
+        let ret = unsafe {
+            rcl_get_service_names_and_types(
+                self.node_handle.as_ref(),
+                &mut rcutils_get_default_allocator(),
+                &mut tnat,
+            )
+        };
+        if ret != RCL_RET_OK as i32 {
+            log::error!("could not get service names and types {}", ret);
+            return Err(Error::from_rcl_error(ret));
+        }
+
+        let mut res = HashMap::new();
+        if tnat.names.data != std::ptr::null_mut() && tnat.types != std::ptr::null_mut() {
+            let names = unsafe { std::slice::from_raw_parts(tnat.names.data, tnat.names.size) };
+            let types = unsafe { std::slice::from_raw_parts(tnat.types, tnat.names.size) };
+
+            for (n, t) in names.iter().zip(types) {
+                assert!(!(*n).is_null());
+                let topic_name = unsafe { CStr::from_ptr(*n).to_str().unwrap().to_owned() };
+                assert!(!t.data.is_null());
+                let topic_types = unsafe { std::slice::from_raw_parts(t, t.size) };
+                let topic_types: Vec<String> = unsafe {
+                    topic_types
+                        .iter()
+                        .map(|t| {
+                            assert!(*(t.data) != std::ptr::null_mut());
+                            CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                        })
+                        .collect()
+                };
+                res.insert(topic_name, topic_types);
+            }
+        }
+        unsafe {
+            rmw_names_and_types_fini(&mut tnat);
+        } // TODO: check return value
+        Ok(res)
+    }
+
+    pub fn get_node_names(&self) -> Result<Vec<(String, String)>> {
+        let mut node_names = unsafe { rcutils_get_zero_initialized_string_array() };
+        let mut node_namespaces = unsafe { rcutils_get_zero_initialized_string_array() };
+
+        let ret = unsafe {
+            rcl_get_node_names(
+                self.node_handle.as_ref(),
+                rcutils_get_default_allocator(),
+                &mut node_names,
+                &mut node_namespaces,
+            )
+        };
+
+        if ret != RCL_RET_OK as i32 {
+            return Err(Error::from_rcl_error(ret));
+        }
+
+        let mut res = Vec::with_capacity(node_names.size);
+
+        let names = unsafe { std::slice::from_raw_parts(node_names.data, node_names.size) };
+        let namespaces = unsafe { std::slice::from_raw_parts(node_namespaces.data, node_namespaces.size) };
+
+        for (n, ns) in names.iter().zip(namespaces) {
+            assert!(!(*n).is_null());
+            assert!(!(*ns).is_null());
+            let node_name = unsafe { CStr::from_ptr(*n).to_str().unwrap().to_owned() };
+            let node_namespace = unsafe { CStr::from_ptr(*ns).to_str().unwrap().to_owned() };
+            res.push((node_name, node_namespace));
+        }
+
+        unsafe {
+            rcutils_string_array_fini(&mut node_names);
+            rcutils_string_array_fini(&mut node_namespaces);
+        }
+
+        Ok(res)
+    }
+
+    pub fn get_node_names_with_enclaves(&self) -> Result<Vec<(String, String, String)>> {
+        let mut node_names = unsafe { rcutils_get_zero_initialized_string_array() };
+        let mut node_namespaces = unsafe { rcutils_get_zero_initialized_string_array() };
+        let mut node_enclaves = unsafe { rcutils_get_zero_initialized_string_array() };
+
+        let ret = unsafe {
+            rcl_get_node_names_with_enclaves(
+                self.node_handle.as_ref(),
+                rcutils_get_default_allocator(),
+                &mut node_names,
+                &mut node_namespaces,
+                &mut node_enclaves,
+            )
+        };
+
+        if ret != RCL_RET_OK as i32 {
+            return Err(Error::from_rcl_error(ret));
+        }
+
+        let mut res = Vec::with_capacity(node_names.size);
+
+        let names = unsafe { std::slice::from_raw_parts(node_names.data, node_names.size) };
+        let namespaces = unsafe { std::slice::from_raw_parts(node_namespaces.data, node_namespaces.size) };
+        let enclaves = unsafe { std::slice::from_raw_parts(node_enclaves.data, node_enclaves.size) };
+
+        for ((n, ns), enc) in names.iter().zip(namespaces).zip(enclaves) {
+            assert!(!(*n).is_null());
+            assert!(!(*ns).is_null());
+            assert!(!(*enc).is_null());
+            let node_name = unsafe { CStr::from_ptr(*n).to_str().unwrap().to_owned() };
+            let node_namespace = unsafe { CStr::from_ptr(*ns).to_str().unwrap().to_owned() };
+            let node_enclave = unsafe { CStr::from_ptr(*enc).to_str().unwrap().to_owned() };
+            res.push((node_name, node_namespace, node_enclave));
+        }
+
+        unsafe {
+            rcutils_string_array_fini(&mut node_names);
+            rcutils_string_array_fini(&mut node_namespaces);
+            rcutils_string_array_fini(&mut node_enclaves);
+        }
+
+        Ok(res)
+    }
+
     pub fn get_publishers_info_by_topic(
         &self, topic_name: &str, no_mangle: bool,
     ) -> Result<Vec<TopicEndpointInfo>> {
@@ -1323,6 +1637,46 @@ impl Node {
 
         let result = unsafe {
             rcl_get_publishers_info_by_topic(
+                node,
+                &mut allocator,
+                topic_c_string.as_ptr(),
+                no_mangle,
+                &mut info_array,
+            )
+        };
+
+        if result != RCL_RET_OK as i32 {
+            unsafe { rmw_topic_endpoint_info_array_fini(&mut info_array, &mut allocator) };
+            return Err(Error::from_rcl_error(result));
+        }
+
+        // Convert info_array to Vec<TopicEndpointInfo>
+        let topic_info_list = convert_info_array_to_vec(&info_array);
+
+        let result = unsafe { rmw_topic_endpoint_info_array_fini(&mut info_array, &mut allocator) };
+
+        if result != RCL_RET_OK as i32 {
+            return Err(Error::from_rcl_error(result));
+        }
+
+        Ok(topic_info_list)
+    }
+
+    pub fn get_subscriptions_info_by_topic(
+        &self, topic_name: &str, no_mangle: bool,
+    ) -> Result<Vec<TopicEndpointInfo>> {
+        let node = self.node_handle.as_ref();
+
+        let topic_c_string =
+            CString::new(topic_name).map_err(|_| Error::RCL_RET_INVALID_ARGUMENT)?;
+
+        let mut allocator = unsafe { rcutils_get_default_allocator() };
+
+        let mut info_array: rcl_topic_endpoint_info_array_t =
+            unsafe { rmw_get_zero_initialized_topic_endpoint_info_array() };
+
+        let result = unsafe {
+            rcl_get_subscriptions_info_by_topic(
                 node,
                 &mut allocator,
                 topic_c_string.as_ptr(),
