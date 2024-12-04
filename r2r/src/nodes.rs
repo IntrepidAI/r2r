@@ -1297,8 +1297,12 @@ impl Node {
                     topic_types
                         .iter()
                         .map(|t| {
-                            assert!(*(t.data) != std::ptr::null_mut());
-                            CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            if t.size == 0 {
+                                String::new()
+                            } else {
+                                assert!(*(t.data) != std::ptr::null_mut());
+                                CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            }
                         })
                         .collect()
                 };
@@ -1345,8 +1349,12 @@ impl Node {
                     topic_types
                         .iter()
                         .map(|t| {
-                            assert!(*(t.data) != std::ptr::null_mut());
-                            CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            if t.size == 0 {
+                                String::new()
+                            } else {
+                                assert!(*(t.data) != std::ptr::null_mut());
+                                CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            }
                         })
                         .collect()
                 };
@@ -1392,8 +1400,12 @@ impl Node {
                     topic_types
                         .iter()
                         .map(|t| {
-                            assert!(*(t.data) != std::ptr::null_mut());
-                            CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            if t.size == 0 {
+                                String::new()
+                            } else {
+                                assert!(*(t.data) != std::ptr::null_mut());
+                                CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            }
                         })
                         .collect()
                 };
@@ -1439,8 +1451,12 @@ impl Node {
                     topic_types
                         .iter()
                         .map(|t| {
-                            assert!(*(t.data) != std::ptr::null_mut());
-                            CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            if t.size == 0 {
+                                String::new()
+                            } else {
+                                assert!(*(t.data) != std::ptr::null_mut());
+                                CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            }
                         })
                         .collect()
                 };
@@ -1484,8 +1500,12 @@ impl Node {
                     topic_types
                         .iter()
                         .map(|t| {
-                            assert!(*(t.data) != std::ptr::null_mut());
-                            CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            if t.size == 0 {
+                                String::new()
+                            } else {
+                                assert!(*(t.data) != std::ptr::null_mut());
+                                CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            }
                         })
                         .collect()
                 };
@@ -1526,8 +1546,12 @@ impl Node {
                     topic_types
                         .iter()
                         .map(|t| {
-                            assert!(*(t.data) != std::ptr::null_mut());
-                            CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            if t.size == 0 {
+                                String::new()
+                            } else {
+                                assert!(*(t.data) != std::ptr::null_mut());
+                                CStr::from_ptr(*(t.data)).to_str().unwrap().to_owned()
+                            }
                         })
                         .collect()
                 };
